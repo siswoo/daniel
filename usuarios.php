@@ -18,11 +18,11 @@
 <body>
 <?php
 	include('script/conexion.php');
-	$ubicacion = "productos";
+	$ubicacion = "usuarios";
 	include('navbar.php');
 ?>
 	
-	<div class="ml-12 mt-3 mb-3 text-center" style="font-size: 24px; font-weight: bold; text-transform: uppercase;">Productos</div>
+	<div class="ml-12 mt-3 mb-3 text-center" style="font-size: 24px; font-weight: bold; text-transform: uppercase;">Usuarios</div>
 
 	<div class="col-12 text-right mt-3 mb-3">
 		<input type="submit" class="btn btn-success" value="Nuevo Registro" data-toggle="modal" data-target="#Modal_new">
@@ -33,12 +33,10 @@
 			<thead>
 				<tr>
 					<th class="text-center">ID</th>
-					<th class="text-center">Descripción</th>
-					<th class="text-center">Marca</th>
-					<th class="text-center">Referencia</th>
-					<th class="text-center">Cantidad</th>
-					<th class="text-center">Precio</th>
-					<th class="text-center">Categoría</th>
+					<th class="text-center">Usuario</th>
+					<th class="text-center">Correo</th>
+					<th class="text-center">Rol</th>
+					<th class="text-center">Sede</th>
 					<th class="text-center">Fecha Ingresado</th>
 					<th class="text-center">Opciones</th>
 				</tr>
@@ -46,41 +44,44 @@
 			
 			<tbody id="resultados">
 				<?php
-				$consulta2 = "SELECT * FROM productos";
+				$consulta2 = "SELECT * FROM usuarios WHERE rol != 1";
 				$resultado2 = mysqli_query( $conexion, $consulta2 );
 				while($row2 = mysqli_fetch_array($resultado2)) {
-					$productos_id 				= $row2['id'];
-					$productos_descripcion 		= $row2['descripcion'];
-					$productos_marca 			= $row2['marca'];
-					$productos_referencia 		= $row2['referencia'];
-					$productos_cantidad 		= $row2['cantidad'];
-					$productos_precio 			= $row2['precio'];
-					$productos_imagen 			= $row2['imagen'];
-					$productos_categoria 		= $row2['categoria'];
-					$productos_fecha_inicio 	= $row2['fecha_inicio'];
-
-					$consulta3 = "SELECT * FROM categorias WHERE id = ".$productos_categoria;
-					$resultado3 = mysqli_query($conexion,$consulta3);
-					while($row3 = mysqli_fetch_array($resultado3)) {
-						$categoria_nombre = $row3['nombre'];
+					$usuarios_id 			= $row2['id'];
+					$usuarios_usuario 		= $row2['usuario'];
+					$usuarios_correo 		= $row2['correo'];
+					$usuarios_rol 			= $row2['rol'];
+					if($usuarios_rol=='1'){
+						$usuarios_rol = 'Admin';
 					}
+					if($usuarios_rol=='2'){
+						$usuarios_rol = 'Encargado';
+					}
+					if($usuarios_rol=='3'){
+						$usuarios_rol = 'Empleado';
+					}
+					$usuarios_sede 			= $row2['sede'];
+					$consulta3 = "SELECT * FROM sedes WHERE id =".$usuarios_sede;
+					$resultado3 = mysqli_query( $conexion, $consulta3 );
+					while($row3 = mysqli_fetch_array($resultado3)) {
+						$sede = $row3['nombre'];
+					}
+					$usuarios_fecha_inicio 	= $row2['fecha_inicio'];
 
 					echo '
 						<tr>
-						    <td class="text-center">'.$productos_id.'</td>
-							<td class="text-center">'.$productos_descripcion.'</td>
-							<td class="text-center">'.$productos_marca.'</td>
-							<td class="text-center">'.$productos_referencia.'</td>
-							<td class="text-center">'.$productos_cantidad.'</td>
-							<td class="text-center">'.$productos_precio.'</td>
-							<td class="text-center">'.$categoria_nombre.'</td>
-							<td class="text-center">'.$productos_fecha_inicio.'</td>
+						    <td class="text-center">'.$usuarios_id.'</td>
+							<td class="text-center">'.$usuarios_usuario.'</td>
+							<td class="text-center">'.$usuarios_correo.'</td>
+							<td class="text-center">'.$usuarios_rol.'</td>
+							<td class="text-center">'.$sede.'</td>
+							<td class="text-center">'.$usuarios_fecha_inicio.'</td>
 							<td class="text-center">
 					';
 
 					echo '
-						<i class="fas fa-edit" style="color:#0095ff; cursor:pointer;" title="" value="'.$productos_id.'" data-toggle="modal" data-target="#Modal_editar" onclick="modal_edit('.$productos_id.');"></i>
-						<i class="fas fa-trash-alt ml-3" style="color:red; cursor:pointer;" data-toggle="popover-hover" onclick="eliminar('.$productos_id.');" value="'.$productos_id.'"></i>
+						<i class="fas fa-edit" style="color:#0095ff; cursor:pointer;" title="" value="'.$usuarios_id.'" data-toggle="modal" data-target="#Modal_editar" onclick="modal_edit('.$usuarios_id.');"></i>
+						<i class="fas fa-trash-alt ml-3" style="color:red; cursor:pointer;" data-toggle="popover-hover" onclick="eliminar('.$usuarios_id.');" value="'.$usuarios_id.'"></i>
 					';
 
 					echo '
@@ -99,14 +100,14 @@
 
 <!--------------------MODALES-------------------------->
 
-<!-- Modal Editar Producto -->
+<!-- Modal Editar -->
 	<div class="modal fade" id="Modal_editar" tabindex="-1" role="dialog" aria-labelledby="Modal_editar" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<form action="#" method="POST" id="form_modal_edit" style="">
 				<input type="hidden" name="edit_id" id="edit_id">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">Editar Producto</h5>
+						<h5 class="modal-title">Editar Usuarios</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -114,38 +115,37 @@
 					<div class="modal-body">
 					    <div class="row">
 						    <div class="col-6 form-group form-check">
-							    <label for="edit_descripcion">Descripción</label>
-							    <input type="text" name="edit_descripcion" id="edit_descripcion" value="" class="form-control" required>
+							    <label for="edit_usuario">Usuario</label>
+							    <input type="text" name="edit_usuario" id="edit_usuario" value="" class="form-control" required>
 						    </div>
 						    <div class="col-6 form-group form-check">
-							    <label for="edit_marca">Marca</label>
-							    <input type="text" name="edit_marca" id="edit_marca" value="" class="form-control" required>
+							    <label for="edit_clave">Clave</label>
+							    <input type="password" name="edit_clave" id="edit_clave" value="" class="form-control" required>
 						    </div>
 						    <div class="col-6 form-group form-check">
-							    <label for="edit_referencia">Referencia</label>
-							    <input type="text" name="edit_referencia" id="edit_referencia" value="" class="form-control" required>
+							    <label for="edit_correo">Correo</label>
+							    <input type="email" name="edit_correo" id="edit_correo" value="" class="form-control" required>
 						    </div>
 						    <div class="col-6 form-group form-check">
-							    <label for="edit_cantidad">Cantidad</label>
-							    <input type="text" name="edit_cantidad" id="edit_cantidad" value="" class="form-control" required>
+							    <label for="edit_rol">Rol</label>
+							    <select id="edit_rol" class="form-control" required>
+							    	<option value="2">Encargado</option>
+							    	<option value="3">Empleado</option>
+							    </select>
 						    </div>
 						    <div class="col-6 form-group form-check">
-							    <label for="edit_precio">Precio</label>
-							    <input type="text" name="edit_precio" id="edit_precio" value="" class="form-control" required>
-						    </div>
-						    <div class="col-6 form-group form-check">
-							    <label for="edit_categoria">Categoría</label>
-							    <select id="edit_categoria" class="form-control" required>
+							    <label for="edit_sede">Sede</label>
+							    <select id="edit_sede" class="form-control" required>
 							    	<?php
-							    	$sql_categoria = "SELECT * FROM categorias";
-							    	$consulta_categoria = mysqli_query($conexion,$sql_categoria);
-									while($row_categoria = mysqli_fetch_array($consulta_categoria)) {
-										echo '<option value="'.$row_categoria["id"].'">'.$row_categoria["nombre"].'</option>';
+							    	$sql_sedes = "SELECT * FROM sedes";
+							    	$consulta_sedes = mysqli_query($conexion,$sql_sedes);
+									while($row_sedes = mysqli_fetch_array($consulta_sedes)) {
+										echo '<option value="'.$row_sedes["id"].'">'.$row_sedes["nombre"].'</option>';
 									}
 									?>
 							    </select>
 						    </div>
-						    <div class="col-12 form-group form-check">
+						    <div class="col-6 form-group form-check">
 							    <label for="edit_fecha_inicio">Fecha de Ingreso</label>
 							    <input type="date" name="edit_fecha_inicio" id="edit_fecha_inicio" value="" class="form-control" required>
 						    </div>
@@ -159,7 +159,7 @@
 	    	</div>
 	  	</div>
 	</div>
-<!-- FIN Modal Editar Producto -->
+<!-- FIN Modal Editar -->
 
 
 <!-- Modal Nuevo -->
@@ -168,7 +168,7 @@
 			<form action="#" method="POST" id="form_modal_new" style="">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">Nuevo Producto</h5>
+						<h5 class="modal-title">Nuevo Usuarios</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -176,38 +176,37 @@
 					<div class="modal-body">
 					    <div class="row">
 						    <div class="col-6 form-group form-check">
-							    <label for="new_descripcion">Descripción</label>
-							    <input type="text" name="new_descripcion" id="new_descripcion" value="" class="form-control" required>
+							    <label for="new_usuario">Usuario</label>
+							    <input type="text" name="new_usuario" id="new_usuario" value="" class="form-control" required>
 						    </div>
 						    <div class="col-6 form-group form-check">
-							    <label for="new_marca">Marca</label>
-							    <input type="text" name="new_marca" id="new_marca" value="" class="form-control" required>
+							    <label for="new_clave">Clave</label>
+							    <input type="password" name="new_clave" id="new_clave" value="" class="form-control" required>
 						    </div>
 						    <div class="col-6 form-group form-check">
-							    <label for="new_referencia">Referencia</label>
-							    <input type="text" name="new_referencia" id="new_referencia" value="" class="form-control" required>
+							    <label for="new_correo">Correo</label>
+							    <input type="email" name="new_correo" id="new_correo" value="" class="form-control" required>
 						    </div>
 						    <div class="col-6 form-group form-check">
-							    <label for="new_cantidad">Cantidad</label>
-							    <input type="text" name="new_cantidad" id="new_cantidad" value="" class="form-control" required>
+							    <label for="new_rol">Rol</label>
+							    <select id="new_rol" class="form-control" required>
+							    	<option value="2">Encargado</option>
+							    	<option value="3">Empleado</option>
+							    </select>
 						    </div>
 						    <div class="col-6 form-group form-check">
-							    <label for="new_precio">Precio</label>
-							    <input type="text" name="new_precio" id="new_precio" value="" class="form-control" required>
-						    </div>
-						    <div class="col-6 form-group form-check">
-							    <label for="new_categoria">Categoría</label>
-							    <select id="new_categoria" class="form-control" required>
+							    <label for="new_sede">Sede</label>
+							    <select id="new_sede" class="form-control" required>
 							    	<?php
-							    	$sql_categoria = "SELECT * FROM categorias";
-							    	$consulta_categoria = mysqli_query($conexion,$sql_categoria);
-									while($row_categoria = mysqli_fetch_array($consulta_categoria)) {
-										echo '<option value="'.$row_categoria["id"].'">'.$row_categoria["nombre"].'</option>';
+							    	$sql_sedes = "SELECT * FROM sedes";
+							    	$consulta_sedes = mysqli_query($conexion,$sql_sedes);
+									while($row_sedes = mysqli_fetch_array($consulta_sedes)) {
+										echo '<option value="'.$row_sedes["id"].'">'.$row_sedes["nombre"].'</option>';
 									}
 									?>
 							    </select>
 						    </div>
-						    <div class="col-12 form-group form-check">
+						    <div class="col-6 form-group form-check">
 							    <label for="new_fecha_inicio">Fecha de Ingreso</label>
 							    <input type="date" name="new_fecha_inicio" id="new_fecha_inicio" value="" class="form-control" required>
 						    </div>
@@ -266,26 +265,24 @@
 	});
 
 
-	function modal_edit(id_producto){
+	function modal_edit(id_usuario){
 		var condicion = 'editar';
 		$.ajax({
 			type: 'POST',
-			url: 'productos_modales.php',
+			url: 'usuarios_modales.php',
 			dataType: "JSON",
 			data: {
-				"id_producto": id_producto,
+				"id_usuario": id_usuario,
 				"condicion": condicion,
 			},
 
 			success: function(respuesta) {
 				//console.log(respuesta);
 				$('#edit_id').val(respuesta['id']);
-				$('#edit_descripcion').val(respuesta['descripcion']);
-				$('#edit_marca').val(respuesta['marca']);
-				$('#edit_referencia').val(respuesta['referencia']);
-				$('#edit_cantidad').val(respuesta['cantidad']);
-				$('#edit_precio').val(respuesta['precio']);
-				$('#edit_categoria').val(respuesta['categoria']);
+				$('#edit_usuario').val(respuesta['usuario']);
+				$('#edit_correo').val(respuesta['correo']);
+				$('#edit_rol').val(respuesta['rol']);
+				$('#edit_sede').val(respuesta['sede']);
 				$('#edit_fecha_inicio').val(respuesta['fecha_inicio']);
 			},
 
@@ -297,24 +294,22 @@
 
 	$("#form_modal_new").on("submit", function(e){
 		e.preventDefault();
-		var descripcion = $('#new_descripcion').val();
-		var marca = $('#new_marca').val();
-		var referencia = $('#new_referencia').val();
-		var cantidad = $('#new_cantidad').val();
-		var precio = $('#new_precio').val();
-		var categoria = $('#new_categoria').val();
+		var usuario = $('#new_usuario').val();
+		var clave = $('#new_clave').val();
+		var correo = $('#new_correo').val();
+		var rol = $('#new_rol').val();
+		var sede = $('#new_sede').val();
 		var fecha_inicio = $('#new_fecha_inicio').val();
 		var condicion = 'nuevo';
 	    $.ajax({
 			type: 'POST',
-			url: 'crud_productos.php',
+			url: 'crud_usuarios.php',
 			data: {
-				"descripcion": descripcion,
-				"marca": marca,
-				"referencia": referencia,
-				"cantidad": cantidad,
-				"precio": precio,
-				"categoria": categoria,
+				"usuario": usuario,
+				"clave": clave,
+				"correo": correo,
+				"rol": rol,
+				"sede": sede,
 				"fecha_inicio": fecha_inicio,
 				"condicion": condicion,
 			},
@@ -322,6 +317,17 @@
 			success: function(respuesta) {
 				//console.log(respuesta);
 				$('#new_submit').addClass('d-none');
+				if(respuesta['sql']=='error'){
+					Swal.fire({
+						position: 'center',
+						icon: 'error',
+						title: 'Usuario o Correo ya existentes...!',
+						showConfirmButton: false,
+						timer: 2000
+					});
+					$('#new_submit').removeClass('d-none');
+					return false;
+				}
 				Swal.fire({
 					position: 'center',
 					icon: 'success',
@@ -330,7 +336,7 @@
 					timer: 2000
 				});
 				setTimeout(function() {
-					window.location.href = "productos.php";
+					window.location.href = "usuarios.php";
 				},2100);
 			},
 
@@ -343,25 +349,23 @@
 	$("#form_modal_edit").on("submit", function(e){
 		e.preventDefault();
 		var id = $('#edit_id').val();
-		var descripcion = $('#edit_descripcion').val();
-		var marca = $('#edit_marca').val();
-		var referencia = $('#edit_referencia').val();
-		var cantidad = $('#edit_cantidad').val();
-		var precio = $('#edit_precio').val();
-		var categoria = $('#edit_categoria').val();
+		var usuario = $('#edit_usuario').val();
+		var clave = $('#edit_clave').val();
+		var correo = $('#edit_correo').val();
+		var rol = $('#edit_rol').val();
+		var sede = $('#edit_sede').val();
 		var fecha_inicio = $('#edit_fecha_inicio').val();
 		var condicion = 'editar';
 	    $.ajax({
 			type: 'POST',
-			url: 'crud_productos.php',
+			url: 'crud_usuarios.php',
 			data: {
 				"id": id,
-				"descripcion": descripcion,
-				"marca": marca,
-				"referencia": referencia,
-				"cantidad": cantidad,
-				"precio": precio,
-				"categoria": categoria,
+				"usuario": usuario,
+				"clave": clave,
+				"correo": correo,
+				"rol": rol,
+				"sede": sede,
 				"fecha_inicio": fecha_inicio,
 				"condicion": condicion,
 			},
@@ -369,6 +373,17 @@
 			success: function(respuesta) {
 				//console.log(respuesta);
 				$('#edit_submit').addClass('d-none');
+				if(respuesta['sql']=='error'){
+					Swal.fire({
+						position: 'center',
+						icon: 'error',
+						title: 'Usuario o Correo ya existentes...!',
+						showConfirmButton: false,
+						timer: 2000
+					});
+					$('#edit_submit').removeClass('d-none');
+					return false;
+				}
 				Swal.fire({
 					position: 'center',
 					icon: 'success',
@@ -377,7 +392,7 @@
 					timer: 2000
 				});
 				setTimeout(function() {
-					window.location.href = "productos.php";
+					window.location.href = "usuarios.php";
 				},2100);
 			},
 
@@ -403,7 +418,7 @@
 		  if (result.value) {
 		    $.ajax({
 				type: 'POST',
-				url: 'crud_productos.php',
+				url: 'crud_usuarios.php',
 				data: {
 					"id": variable,
 					"condicion": condicion,
@@ -416,8 +431,8 @@
 					    icon: 'success',
 					    showConfirmButton: false
 				    });setTimeout(function() {
-			      		window.location.href = "productos.php";
-			    	},3500);
+			      		window.location.href = "usuarios.php";
+			    	},1500);
 				},
 
 				error: function(respuesta) {

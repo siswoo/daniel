@@ -58,6 +58,8 @@ DROP TABLE IF EXISTS productos;
 CREATE TABLE productos (
 	id INT AUTO_INCREMENT,
 	descripcion VARCHAR(250) NOT NULL,
+	marca VARCHAR(250) NOT NULL,
+	referencia VARCHAR(250) NOT NULL,
 	cantidad INT NOT NULL,
 	precio INT NOT NULL,
 	imagen VARCHAR(250) NOT NULL,
@@ -66,8 +68,8 @@ CREATE TABLE productos (
 	PRIMARY KEY (id)
 ); ALTER TABLE productos CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
-INSERT INTO productos (descripcion,cantidad,precio,imagen,categoria,fecha_inicio) VALUES
-('Test',20,400000,'default.jpg',1,'2020-10-13');
+INSERT INTO productos (descripcion,marca,referencia,cantidad,precio,imagen,categoria,fecha_inicio) VALUES
+('Test','Marca','referencia',20,400000,'default.jpg',1,'2020-10-13');
 
 DROP TABLE IF EXISTS servicios;
 CREATE TABLE servicios (
@@ -112,3 +114,14 @@ CREATE TABLE facturacion (
 	fecha_inicio date NOT NULL,
 	PRIMARY KEY (id)
 ); ALTER TABLE facturacion CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+DROP TABLE IF EXISTS sedes;
+CREATE TABLE sedes (
+	id INT AUTO_INCREMENT,
+	nombre VARCHAR(250) NOT NULL,
+	direccion VARCHAR(250) NOT NULL,
+	fecha_inicio date NOT NULL,
+	PRIMARY KEY (id)
+); ALTER TABLE sedes CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+INSERT INTO sedes (nombre,direccion,fecha_inicio) VALUES ('Principal','Restrepo','2020-12-15');

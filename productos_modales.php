@@ -10,6 +10,8 @@ if($condicion=='editar'){
 		$datos = [
 			"id" => $row['id'],
 			"descripcion" => $row['descripcion'],
+			"marca" => $row['marca'],
+			"referencia" => $row['referencia'],
 			"cantidad" => $row['cantidad'],
 			"precio" => $row['precio'],
 			"imagen" => $row['imagen'],

@@ -5,11 +5,17 @@
   	</button>
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item" id="li-modelo">
-	        	<a class="nav-link navbar-active-a" href="productos.php" id="a-modelo">Productos</a>
+			<li class="nav-item" id="li-productos">
+	        	<a class="nav-link navbar-active-a" href="productos.php" id="a-productos">Productos</a>
 	      	</li>
-	      	<li class="nav-item" id="li-modelo">
-	        	<a class="nav-link navbar-active-a" href="servicios.php" id="a-modelo">Servicios</a>
+	      	<li class="nav-item" id="li-servicios">
+	        	<a class="nav-link navbar-active-a" href="servicios.php" id="a-servicios">Servicios</a>
+	      	</li>
+	      	<li class="nav-item" id="li-categorias">
+	        	<a class="nav-link navbar-active-a" href="categorias.php" id="a-categorias">Categorías</a>
+	      	</li>
+	      	<li class="nav-item" id="li-usuarios">
+	        	<a class="nav-link navbar-active-a" href="usuarios.php" id="a-usuarios">Usuarios</a>
 	      	</li>
 	    </ul>
 
